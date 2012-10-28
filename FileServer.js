@@ -22,6 +22,27 @@ var browserPage = mainhtml.replace("%body%",
 "<ul> %files%" +
 "</ul>");
 
+// load the file typescript.js and lib.d.ts
+var filebuffer = {
+  _buffer: {},
+  loadLocalFile: function( filename ) {
+    var base = process.argv[1] && process.argv[1].replace(/[^\/\\]*$/, "");
+    if (base === undefined) {
+      throw new Error("file "+ filename+ " cannot be opened");
+    }
+    var filePath = base + filename;
+    this._buffer[filename] = fs.readFileSync( filePath ).toString();
+    return this._buffer[filename];
+  },
+  getFile: function( filename ) {
+    return this._buffer[filename] || this.loadLocalFile( filename );
+  }
+};
+
+var TypeScript = eval( filebuffer.getFile("typescript.js")+";TypeScript;" );
+filebuffer.loadLocalFile("lib.d.ts");
+
+console.log(TypeScript);
 
 function resList( path, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
