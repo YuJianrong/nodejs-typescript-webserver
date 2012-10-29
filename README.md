@@ -11,7 +11,7 @@ Now you can use the **NodeJS TypeScript Webserver** as a simple web server to de
 
 It's very simple to use this Webserver, just run
    
-    node <the directory you place the **NodeJS TypeScript Webserver** >/bin/FileServer.js
+    node <the directory you place the NodeJS TypeScript Webserver >/bin/FileServer.js
  
 A Webserver will be launched on 0.0.0.0:808, you can run http://127.0.0.1:808 to visit the server now. The root directory of the site will be the directory you launch the server. Now when you download a `.ts` file from the server, the `.ts` file will be compile to JavaScript on-the-fly and the response will be the compiled code.
 
