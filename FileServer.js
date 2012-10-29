@@ -3,6 +3,7 @@
 var http = require('http');
 var url = require("url");
 var fs = require("fs");
+var path = require("path");
 
 var mainhtml = "<!doctype html>"+
 "<html>" +
@@ -40,9 +41,9 @@ var filebuffer = {
 };
 
 var TypeScript = eval( filebuffer.getFile("typescript.js")+";TypeScript;" );
-filebuffer.loadLocalFile("lib.d.ts");
+filebuffer.getFile("lib.d.ts");
 
-console.log(TypeScript);
+// console.log(TypeScript);
 
 function resList( path, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
@@ -1062,26 +1063,60 @@ var MIME = {
 
 console.log(process.cwd());
 
-function resFile( path, res) {
-  var re_ext = /\.([^\/.]*?)$/.exec(path),
-      ext;
-  var mime;
-  if (re_ext ) {
-    ext = re_ext[1].toLowerCase()
-    mime = MIME[ext];
-  };
+function resFile( filepath, res) {
+  var ext = path.extname( filepath ).toLowerCase().replace(".", "");
+  var mime= MIME[ext];
   if (mime === undefined) {
     mime = MIME["html"];
   };
 
-  fs.readFile( path , function(err, data){
+  fs.readFile( filepath , function(err, data){
       if ( err ) {
         res.writeHead(500);
         res.writeHead("Internal error: "+ err);
       } else {
         if ( ext === "ts" ) {
-          res.writeHead(200, {'Content-Type': MIME["js"] });
-          res.end( data );
+
+          var errMessages=[];
+          var source = data.toString();
+          var reRef = /\/\/\/\s*<reference\s+path\s*=\s*['"]([^'"]*)['"]\s*\/>\s*$/gm;
+          var refs = source.match(reRef);
+          refs = refs && refs.map(function( strRef) { return reRef.exec( strRef )[1]; });
+
+          var outfile = {
+            source: '',
+            Write: function(s) {
+              this.source += s;
+            },
+            WriteLine: function(s) {
+              this.source += s + '\n';
+            },
+            Close: function() {}
+          };
+          var compiler = new TypeScript.TypeScriptCompiler(outfile);
+          compiler.parser.errorRecovery = true;
+          compiler.setErrorCallback(function(start, len, message, block) {
+              errMessages.push('Compilation error: Code block: '+ block+ ' Start position: '+ start+ ' Length: '+ len +": " +  message);
+          });
+          compiler.addUnit( filebuffer.getFile("lib.d.ts"), 'lib.d.ts');
+          compiler.addUnit(source , filepath );
+          // load the required ts 
+          refs && refs.forEach( function( tsFileName) {
+              var tsPath = path.join( path.dirname( filepath ), tsFileName );
+              compiler.addUnit( fs.readFileSync( tsPath ).toString(), tsFileName );
+          });
+          compiler.typeCheck();
+          compiler.emit(false, function createFile(fileName) {
+              return outfile;
+          });
+
+          if ( errMessages.length === 0 ) {
+            res.writeHead(200, {'Content-Type': MIME["js"] });
+            res.end( outfile.source );
+          } else {
+            res.writeHead(500);
+            res.end( errMessages.join("\n") );
+          }
         } else {
           res.writeHead(200, {'Content-Type': mime });
           res.end( data );
@@ -1095,7 +1130,6 @@ http.createServer(function (req, res) {
 
     var filepath = "."+decodeURIComponent( url.parse( req.url, true ).pathname );
     try {
-      console.log( req.url);
       console.log( filepath );
       fs.stat( filepath, function(err, stat){
           if (err) {

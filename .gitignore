@@ -166,3 +166,4 @@ pip-log.txt
 *.vimentry
 quick_gen_project*
 .vimfiles.*
+*.err
