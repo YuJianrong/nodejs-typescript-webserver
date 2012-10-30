@@ -29,6 +29,10 @@ Demos
 ----
 You can find the demos on directory `demo/` , the demos are copied from TypeScript source code and the `<script>` tag in the html files are all modified from `.js` to `.ts`.
 
+TypeScript Compile Error
+----
+If the TypeScript compiling is failed, the error report alert will be returned for the request instead of compiled code.
+
 Compile
 ----
 To compile the **NodeJS TypeScript Webserver** yourself, TypeScript must be installed by npm:
