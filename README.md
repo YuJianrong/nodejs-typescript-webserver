@@ -35,7 +35,7 @@ If the TypeScript compiling is failed, the error report alert will be returned f
 
 Source Maps
 ----
-[Source Maps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) is supported by the server. You can debug the client code in TypeScript if you use the browser which source maps are supported (A.K.A Chrome).
+[Source Maps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) is supported by the server. You can debug the client code in TypeScript if you use the browser which source maps is supported (e.g. Chrome).
 
 
 Compile
