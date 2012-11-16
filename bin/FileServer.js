@@ -1166,6 +1166,7 @@ var main;
     var url = require("url")
     var http = require("http")
     var fs = require("fs")
+    var port = parseInt(process.argv[2]) || 808;
     http.createServer(function (req, res) {
         var filepath = "." + decodeURIComponent(url.parse(req.url, true).pathname);
         var originalSource = false;
@@ -1202,8 +1203,8 @@ var main;
             res.writeHead(500);
             res.end("Internal Error (or file not found)");
         }
-    }).listen(808, '0.0.0.0');
-    console.log('Server running at http://127.0.0.1:808/');
+    }).listen(port, '0.0.0.0');
+    console.log('Server running at http://127.0.0.1:' + port + '/');
 })(main || (main = {}));
 
 ; ;
