@@ -1069,7 +1069,7 @@ module Responsor {
 
     var filelis = "";
     for (var i in files) {
-      filelis += '<li><a target="_blank" href="' + files[i].name + '">'+ files[i].name +'</a>';
+      filelis += '<li><a href="' + files[i].name + '">'+ files[i].name +'</a>';
     }
 
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -1178,10 +1178,13 @@ module main{
   import url = module("url");
   import http = module("http");
   import fs = module("fs");
-  var port = parseInt(process.argv[2]) || 8080;
+
+  var dir = process.argv[2] || process.cwd();
+  var port = parseInt(process.argv[3]) || 8080;
+
   http.createServer(function (req:http.ServerRequest, res:http.ServerResponse) {
 
-      var filepath:string = "."+decodeURIComponent( url.parse( req.url, true ).pathname );
+      var filepath:string = dir+decodeURIComponent( url.parse( req.url, true ).pathname );
       var originalSource = false;
       try {
         console.log( filepath );
@@ -1199,7 +1202,7 @@ module main{
 
         fs.stat( filepath, function(err:Error, stat:fs.Stats){
             if (err) {
-              // console.log(e);
+              console.log(err);
               res.writeHead(500);
               res.end("Internal Error : " + err );
               return;
@@ -1213,13 +1216,13 @@ module main{
             }
         });
       } catch(e) {
-        // console.log(e);
+        console.log(e);
         res.writeHead(500);
         res.end("Internal Error (or file not found)");
       }
 
   }).listen(port, '0.0.0.0');
-  console.log('Server running at http://127.0.0.1:'+port+'/');
+  console.log('TypeScript-aware development server running at http://127.0.0.1:'+port+'/, serving files from ' + dir);
 };
 
 
