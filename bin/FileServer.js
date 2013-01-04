@@ -1007,7 +1007,6 @@ var filebuffer;
     }
     filebuffer.setFile = setFile;
 })(filebuffer || (filebuffer = {}));
-
 ; ;
 var htmlTemplate;
 (function (htmlTemplate) {
@@ -1018,7 +1017,6 @@ var htmlTemplate;
     }
     htmlTemplate.build = build;
 })(htmlTemplate || (htmlTemplate = {}));
-
 var TypeScript = eval(filebuffer.getFile("typescript.js").toString() + ";TypeScript;");
 var Responsor;
 (function (Responsor) {
@@ -1160,13 +1158,12 @@ var Responsor;
     }
     Responsor.resFile = resFile;
 })(Responsor || (Responsor = {}));
-
 var main;
 (function (main) {
     var url = require("url")
     var http = require("http")
     var fs = require("fs")
-    var port = parseInt(process.argv[2]) || 808;
+    var port = parseInt(process.argv[2]) || 8080;
     http.createServer(function (req, res) {
         var filepath = "." + decodeURIComponent(url.parse(req.url, true).pathname);
         var originalSource = false;
@@ -1206,5 +1203,4 @@ var main;
     }).listen(port, '0.0.0.0');
     console.log('Server running at http://127.0.0.1:' + port + '/');
 })(main || (main = {}));
-
 ; ;
