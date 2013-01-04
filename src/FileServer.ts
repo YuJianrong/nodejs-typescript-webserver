@@ -1178,7 +1178,7 @@ module main{
   import url = module("url");
   import http = module("http");
   import fs = module("fs");
-  var port = parseInt(process.argv[2]) || 808;
+  var port = parseInt(process.argv[2]) || 8080;
   http.createServer(function (req:http.ServerRequest, res:http.ServerResponse) {
 
       var filepath:string = "."+decodeURIComponent( url.parse( req.url, true ).pathname );
