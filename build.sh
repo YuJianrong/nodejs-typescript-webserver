@@ -1,4 +1,4 @@
-#!bash
+#!/bin/sh
 
 # copy static files
 cp src/lib.d.ts ./bin/
